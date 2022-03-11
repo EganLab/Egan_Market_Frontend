@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { lazy, Suspense } from 'react';
+import { Body } from 'components/Layout';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useContext } from 'react';
+import { ThemeContext } from 'contexts/Theme';
+import NavBar from 'components/NavBar';
+import { Loading } from 'components/Loading';
+import { createBrowserHistory } from 'history';
+
+const history = createBrowserHistory();
+
+const Home = lazy(() => import('pages/Home'));
 
 function App() {
+  const { mountedComponent } = useContext(ThemeContext);
+
+  if (!mountedComponent) return <div />;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={history}>
+      <NavBar />
+
+      <Body>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+          </Routes>
+        </Suspense>
+      </Body>
+    </Router>
   );
 }
 
