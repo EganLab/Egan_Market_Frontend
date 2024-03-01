@@ -18,7 +18,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           ORGANIZATION: EganLab
-          PROJECT_NUMBER: 1
+          PROJECT_NUMBER: '1'
         run: |
           gh api graphql -f query='
             query($org: String!, $number: Int!) {
