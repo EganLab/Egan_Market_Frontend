@@ -18,7 +18,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           ORGANIZATION: EganLab
-          PROJECT_NUMBER: '1'
+          PROJECT_NUMBER: 1
         run: |
           gh api graphql -f query='
             query($org: String!, $number: Int!) {
@@ -44,14 +44,14 @@ jobs:
                 }
               }
             }' -f org=$ORGANIZATION -F number=$PROJECT_NUMBER > project_data.json
-          echo 'PROJECT_ID='$(jq '.data.organization.projectV2.id' project_data.json) >> $GITHUB_ENV
-          echo 'DATE_FIELD_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Date posted") | .id' project_data.json) >> $GITHUB_ENV
-          echo 'STATUS_FIELD_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Status") | .id' project_data.json) >> $GITHUB_ENV
-          echo 'TODO_OPTION_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Status") | .options[] | select(.name=="Todo") |.id' project_data.json) >> $GITHUB_ENV
+            echo 'PROJECT_ID='$(jq '.data.organization.projectV2.id' project_data.json) >> $GITHUB_ENV
+            echo 'DATE_FIELD_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Date posted") | .id' project_data.json) >> $GITHUB_ENV
+            echo 'STATUS_FIELD_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Status") | .id' project_data.json) >> $GITHUB_ENV
+            echo 'TODO_OPTION_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Status") | .options[] | select(.name=="Todo") |.id' project_data.json) >> $GITHUB_ENV
       - name: Add issue to project
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
-          ISSUE_ID: ${{ github.event.issues.node_id }}
+          ISSUE_ID: ${{ github.event.issue.node_id }}
         run: |
           item_id="$( gh api graphql -f query='
             mutation($project:ID!, $issue:ID!) {
@@ -61,7 +61,7 @@ jobs:
                 }
               }
             }' -f project=$PROJECT_ID -f issue=$ISSUE_ID --jq '.data.addProjectV2ItemById.item.id')"
-            echo 'ITEM_ID='$item_id >> $GITHUB_ENV
+          echo 'ITEM_ID='$item_id >> $GITHUB_ENV
       - name: Get date
         run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
       - name: Set fields
