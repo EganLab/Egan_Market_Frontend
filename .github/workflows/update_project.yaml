@@ -16,7 +16,7 @@ jobs:
           private-key: ${{ secrets.APP_PEM }}
       - name: Get project data
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
           ORGANIZATION: EganLab
           PROJECT_NUMBER: 1
         run: |
